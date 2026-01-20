@@ -1,0 +1,14 @@
+diff --git a/meson.build b/meson.build
+index 7281b7ec69..37fa86948e 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1156,9 +1156,6 @@
+         # On Windows, you can (and should) listen on autolaunch addresses,
+         # because autolaunching is not the same as X11 autolaunching.
+         session_bus_listen_address = 'autolaunch:'
+-    elif use_launchd
+-        # macOS default is to use launchd
+-        session_bus_listen_address = 'launchd:env=DBUS_LAUNCHD_SESSION_BUS_SOCKET'
+     else
+         # The default on all other Unix platforms (notably Linux)
+         # is to create a randomly named socket in /tmp or similar

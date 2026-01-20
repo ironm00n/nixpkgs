@@ -56,6 +56,12 @@ stdenv.mkDerivation (finalAttrs: {
     # We will also just remove installation of empty `${runstatedir}/dbus`
     # and `${localstatedir}/lib/dbus` since these are useless in the package.
     ./meson-install-dirs.patch
+
+    # After the Meson upgrade, Darwin defaults to using launchd activation for
+    # the daemon, which breaks anything using `dbus-run-session`. This patch
+    # makes Darwin use a randomly named socket in `/tmp`, matching the default
+    # for other UNIX platforms.
+    ./darwin-use-tmpdir.patch
   ];
 
   strictDeps = true;
