@@ -56,6 +56,12 @@ stdenv.mkDerivation (finalAttrs: {
     # We will also just remove installation of empty `${runstatedir}/dbus`
     # and `${localstatedir}/lib/dbus` since these are useless in the package.
     ./meson-install-dirs.patch
+
+    # After the Meson upgrade, Darwin defaults to using launchd activation for
+    # the daemon, which breaks anything using `dbus-run-session`. This patch
+    # makes Darwin use a randomly named socket in `/tmp`, matching the default
+    # for other UNIX platforms.
+    ./darwin-use-tmpdir.patch
   ];
 
   strictDeps = true;
@@ -143,6 +149,14 @@ stdenv.mkDerivation (finalAttrs: {
       --replace-fail 'DBUS_BINDIR "/dbus-launch"' "\"$lib/bin/dbus-launch\""
     substituteInPlace ./tools/dbus-launch.c \
       --replace-fail 'DBUS_DAEMONDIR"/dbus-daemon"' '"/run/current-system/sw/bin/dbus-daemon"'
+  '';
+
+  postInstall = lib.optionalAttrs stdenv.hostPlatform.isDarwin ''
+    # For some reason, only these binaries reference the dylib by rpath instead of by an absolute install name.
+    for exe in bin/dbus-daemon bin/dbus-run-session libexec/dbus-daemon-launch-helper; do
+      install_name_tool "$out/$exe" \
+        -change "@rpath/libdbus-1.3.dylib" "$lib/lib/libdbus-1.3.dylib"
+    done
   '';
 
   postFixup = ''
