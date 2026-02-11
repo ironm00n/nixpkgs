@@ -28,7 +28,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "swiftlang";
     repo = "swift-corelibs-libdispatch";
     tag = "swift-${finalAttrs.version}-RELEASE";
-    hash = lib.fakeHash;
+    hash = "sha256-Tu2G9FAP4q1xgM1n9q17T6VrqJ3tv8RezyUex38yNds=";
   };
 
   strictDeps = true;
