@@ -151,13 +151,13 @@ stdenv.mkDerivation (finalAttrs: {
       --replace-fail 'DBUS_DAEMONDIR"/dbus-daemon"' '"/run/current-system/sw/bin/dbus-daemon"'
   '';
 
-  postInstall = lib.optionalAttrs stdenv.hostPlatform.isDarwin ''
+  postInstall = if stdenv.hostPlatform.isDarwin then ''
     # For some reason, only these binaries reference the dylib by rpath instead of by an absolute install name.
     for exe in bin/dbus-daemon bin/dbus-run-session libexec/dbus-daemon-launch-helper; do
       install_name_tool "$out/$exe" \
         -change "@rpath/libdbus-1.3.dylib" "$lib/lib/libdbus-1.3.dylib"
     done
-  '';
+  '' else "";
 
   postFixup = ''
     # It's executed from $lib by absolute path

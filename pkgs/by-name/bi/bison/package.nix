@@ -1,7 +1,6 @@
 {
   lib,
   stdenv,
-  darwin,
   fetchurl,
   m4,
   perl,
@@ -72,8 +71,8 @@ stdenv.mkDerivation (rec {
 
     platforms = lib.platforms.unix;
   };
-} // lib.optionalAttrs (lib.getVersion stdenv.cc.libcxx == "20.1.0+apple-sdk-26.0") {
+} /* // lib.optionalAttrs (stdenv.cc.libcxx != null && lib.getVersion stdenv.cc.libcxx == "20.1.0+apple-sdk-26.0") {
   # Disable because it causes the following test failure on libc++ 20 and newer.
   # 764: Leaked lookahead after nondeterministic parse syntax error: glr2.cc FAILED (glr-regression.at:1862)
   hardeningDisable = [ "libcxxhardeningfast" ];
-})
+} */)
